@@ -1,0 +1,53 @@
+# othello_interface.py
+import othello_logic
+
+
+def print_board(board: [[str]]) -> None:
+    """ Prints the game board to the console """
+    # Column indices
+    print('\n')
+    print('  ', end='')
+    for col_index in range(len(board)):  # board has equal column to row
+        print(f' {col_index} ', end='')
+    print('\n')
+    for row_index in range(len(board)):
+        print(f'{row_index} ', end='')  # Row index
+        for col in board[row_index]:
+            print(f' {col} ', end='')
+        print('\n')
+    return
+
+
+def game_loop():
+    """ Runs the game loop """
+    print('#----------OTHELLO----------#')
+    board_size = int(input('Board size: '))
+    game_board = othello_logic.set_game_board(board_size)
+    game_info = othello_logic.default_game_info()
+    error_msg = None
+
+    while True:
+        print('#----------#')
+        print_board(game_board)
+        print(f'\nB: {game_info.black_count} | ', end='')
+        print(f'W: {game_info.white_count}')
+        if error_msg is not None:
+            print(error_msg)
+        if game_info.prev_turn is not None and error_msg is None:
+            print(f'Placed {game_info.prev_turn} at ({game_info.prev_move.row},{game_info.prev_move.column})')
+        move = input('Please enter a move: [row] [col] (or "quit" to quit)\n')
+        if move == 'quit':
+            print('Game quit. Game over!')
+            return
+        try:
+            move = move.split(' ')
+            move_row, move_column = int(move[0]), int(move[1])
+            if othello_logic.is_valid_move(game_board, move_row, move_column):
+                game_board = othello_logic.place_piece_on_board(game_board, move_row, move_column, game_info.curr_turn)
+                game_info = othello_logic.update_game_info(game_info, move_row, move_column, game_info.curr_turn)
+            error_msg = None
+        except:
+            error_msg = 'Invalid move.'
+        # if othello_logic.is_valid_move(move):
+        #     game_board = othello_logic.place_piece_on_board(game_board, move, game_info.turn)
+        #     # game_info = othello_logic.update_game_info()
