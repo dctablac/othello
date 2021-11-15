@@ -32,7 +32,7 @@ def game_loop():
         except ValueError:
             print('Please enter a board size of 4, 6, or 8')
 
-    game_board = othello_logic.set_game_board(board_size)
+    game_board = othello_logic.empty_game_board(board_size)
     game_info = othello_logic.default_game_info()
     error_msg = None
 
@@ -52,8 +52,12 @@ def game_loop():
         try:
             move = move.split(' ')
             move_row, move_column = int(move[0]), int(move[1])
-            if othello_logic.is_valid_move(game_board, move_row, move_column):
-                game_board = othello_logic.place_piece_on_board(game_board, move_row, move_column, game_info.curr_turn)
+            is_valid_move, flank_map = othello_logic.is_valid_move(game_board, move_row,
+                                                                   move_column, game_info.curr_turn)
+            if is_valid_move:
+                # Place player piece and flip opponent pieces
+                game_board = othello_logic.make_move(game_board, move_row, move_column, game_info.curr_turn, flank_map)
+                # Update game info with new piece counts
                 black_count = othello_logic.count_player_pieces(game_board, othello_logic.P_BLACK)
                 white_count = othello_logic.count_player_pieces(game_board, othello_logic.P_WHITE)
                 game_info = othello_logic.update_game_info(game_info, move_row, move_column, black_count, white_count)
@@ -61,8 +65,8 @@ def game_loop():
             else:
                 raise othello_logic.InvalidMoveError
         except othello_logic.InvalidMoveError:
-            error_msg = 'Invalid move. Out of bounds.'
+            error_msg = 'Invalid move.'
         except ValueError:
-            error_msg = 'Invalid move. Please enter numbers in range 0-9.'
+            error_msg = 'Please enter numbers in the range 0-9.'
         except IndexError:
             error_msg = 'Invalid move. Please enter a row number and a column number in the range 0-9.'
