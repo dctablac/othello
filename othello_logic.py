@@ -62,6 +62,27 @@ def count_player_pieces(board: [[str]], player: str) -> int:
     return count
 
 
+# Validation functions
+
+
+def is_valid_move(board: [[str]], row: int, column: int) -> bool:
+    """ Validates a move """
+    board_len = len(board)
+    if (row < 0 or row > board_len - 1) or (column < 0 or column > board_len - 1):
+        raise InvalidMoveError
+    if board[row][column] != '-':
+        raise InvalidMoveError
+    # TODO: Extra checks
+    return True
+
+
+def is_valid_board_size(board_size: int) -> int:
+    """ Validates the board size given """
+    if board_size < 4 or board_size > 8 or (board_size % 2 != 0):
+        return False
+    return True
+
+
 # Helper functions
 
 
@@ -78,20 +99,6 @@ def _set_first_pieces(board: [[str]]) -> [[str]]:
 def _flip_turn(turn: str) -> str:
     """ Flips the game turn """
     return P_WHITE if turn == P_BLACK else P_BLACK
-
-
-# Validation functions
-
-
-def is_valid_move(board: [[str]], row: int, column: int) -> bool:
-    """ Validates a move """
-    board_len = len(board)
-    if (row < 0 or row > board_len - 1) or (column < 0 or column > board_len - 1):
-        raise InvalidMoveError
-    if board[row][column] != '-':
-        raise InvalidMoveError
-    # TODO: Extra checks
-    return True
 
 
 # Exception classes

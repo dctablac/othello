@@ -2,21 +2,6 @@
 import othello_logic
 
 
-def validate_board_size() -> int:
-    """ Validates the board size given or quits the game """
-    while True:
-        try:
-            board_size = input('Board size [4, 6, or 8] (or "quit" to quit): ')
-            if board_size == 'quit':
-                return -1
-            board_size = int(board_size)
-            if board_size < 4 or board_size > 8 or (board_size % 2 != 0):
-                raise ValueError
-            return board_size
-        except ValueError:
-            print('Please enter a board size of 4, 6, or 8')
-
-
 def print_board(board: [[str]]) -> None:
     """ Prints the game board to the console """
     # Column indices
@@ -36,14 +21,22 @@ def print_board(board: [[str]]) -> None:
 def game_loop():
     """ Runs the game loop """
     print('#----------OTHELLO----------#')
-    board_size = validate_board_size()
-    if board_size == -1:
-        return
+    while True:  # Board size validation
+        try:
+            board_size = int(input('Board size [4, 6, or 8] (or 0 to quit): '))
+            if board_size == 0:
+                return  # Game exited
+            if othello_logic.is_valid_board_size(board_size):
+                break
+            raise ValueError
+        except ValueError:
+            print('Please enter a board size of 4, 6, or 8')
+
     game_board = othello_logic.set_game_board(board_size)
     game_info = othello_logic.default_game_info()
     error_msg = None
 
-    while True:
+    while True:  # Main game loop
         print('#----------#')
         print_board(game_board)
         print(f'\nB: {game_info.black_count} | ', end='')
@@ -68,6 +61,8 @@ def game_loop():
             else:
                 raise othello_logic.InvalidMoveError
         except othello_logic.InvalidMoveError:
-            error_msg = 'Invalid move.'
+            error_msg = 'Invalid move. Out of bounds.'
         except ValueError:
-            error_msg = "Invalid move. Please enter numbers in range 0-9"
+            error_msg = 'Invalid move. Please enter numbers in range 0-9.'
+        except IndexError:
+            error_msg = 'Invalid move. Please enter a row number and a column number in the range 0-9.'
