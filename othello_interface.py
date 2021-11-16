@@ -18,6 +18,12 @@ def print_board(board: [[str]]) -> None:
     return
 
 
+def print_game_over(winner: str) -> None:
+    """ Prints the game over message. """
+    print('GAME OVER!')
+    print(f'WINNER: {winner}')
+
+
 def game_loop():
     """ Runs the game loop """
     print('#----------OTHELLO----------#')
@@ -46,6 +52,12 @@ def game_loop():
         if game_info.prev_turn is not None and error_msg is None:
             print(f'Placed {game_info.prev_turn} at ({game_info.prev_move.row},{game_info.prev_move.column})')
         print(f'Turn: {game_info.curr_turn}')
+        # Check if any moves left
+        if othello_logic.is_game_over(game_board):
+            winner = othello_logic.P_BLACK if game_info.black_count > game_info.white_count else othello_logic.P_WHITE
+            winner = 'TIE' if game_info.black_count == game_info.white_count else winner
+            return print_game_over(winner)
+
         move = input('Please enter a move: [row] [col] (or "quit" to quit)\n')
         if move == 'quit':
             return print('Game quit. Game over!')

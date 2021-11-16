@@ -34,15 +34,13 @@ def empty_game_board(n: int) -> [[str]]:
 
 
 def update_game_info(game_info: GameInfo, curr_move_row: int, curr_move_column: int,
-                     new_black_count: int, new_white_count: int, winner=None, is_game_over=False) -> GameInfo:
+                     new_black_count: int, new_white_count: int) -> GameInfo:
     """ Returns updated game info """
     prev_move = Move(curr_move_row, curr_move_column)
     return game_info._replace(
         black_count=new_black_count,
         white_count=new_white_count,
         curr_turn=_change_turn(game_info.curr_turn),
-        winner=winner,
-        is_game_over=is_game_over,
         prev_move=prev_move,
         prev_turn=game_info.curr_turn
     )
@@ -88,6 +86,15 @@ def is_valid_board_size(board_size: int) -> int:
     """ Validates the board size given """
     if board_size < 4 or board_size > 8 or (board_size % 2 != 0):
         return False
+    return True
+
+
+def is_game_over(board: [[str]]) -> bool:
+    """ Checks if no more moves are available """
+    for row in board:
+        for col in row:
+            if col == EMPTY_CELL:
+                return False
     return True
 
 
