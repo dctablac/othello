@@ -119,22 +119,28 @@ def _create_flank_map(board: [[str]], move_row: int, move_column: int, player: s
     """ Creates a dictionary {direction, _can_outflank} that stores whether a move will outflank
         opponent pieces in a direction """
     position = Move(move_row, move_column)
-    # TODO: Add more directions
     outflanking_directions = {DIRECTION.SOUTH: _can_outflank_south(board, position, player),
                               DIRECTION.NORTH: _can_outflank_north(board, position, player),
                               DIRECTION.EAST: _can_outflank_east(board, position, player),
-                              DIRECTION.WEST: _can_outflank_west(board, position, player)}
+                              DIRECTION.WEST: _can_outflank_west(board, position, player),
+                              DIRECTION.SOUTHEAST: _can_outflank_southeast(board, position, player),
+                              DIRECTION.SOUTHWEST: _can_outflank_southwest(board, position, player),
+                              DIRECTION.NORTHEAST: _can_outflank_northeast(board, position, player),
+                              DIRECTION.NORTHWEST: _can_outflank_northwest(board, position, player)}
     return outflanking_directions
 
 
 def _flip_opponent_pieces(flank_map: dict, board: [[str]], move_row: int, move_column: int, player: str) -> [[str]]:
     """ Call all outflank functions in valid directions """
     position = Move(move_row, move_column)
-    # TODO: Add more directions
     outflank_functions = {DIRECTION.SOUTH: _outflank_south,
                           DIRECTION.NORTH: _outflank_north,
                           DIRECTION.EAST: _outflank_east,
-                          DIRECTION.WEST: _outflank_west}
+                          DIRECTION.WEST: _outflank_west,
+                          DIRECTION.SOUTHEAST: _outflank_southeast,
+                          DIRECTION.SOUTHWEST: _outflank_southwest,
+                          DIRECTION.NORTHEAST: _outflank_northeast,
+                          DIRECTION.NORTHWEST: _outflank_northwest}
     for direction in flank_map.keys():
         if flank_map[direction]:
             board = outflank_functions[direction](board, position, player)
@@ -154,12 +160,11 @@ def _player_can_outflank(flank_map: dict) -> bool:
 
 def _can_outflank_south(board: [[str]], player_position: Move, player: str) -> bool:
     """ Check if pieces will flip south of current position """
-    last_row = len(board) - 1
-    opponent = P_WHITE if player == P_BLACK else P_BLACK
-    opponent_seen = False
     if not _boundary_check(DIRECTION.SOUTH, player_position, board):  # Needs to be third from last row minimum
         return False
-    for row_index in range(player_position.row + 1, last_row + 1):  # Check all rows after current row
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
+    for row_index in range(player_position.row + 1, len(board)):  # Check all rows after current row
         curr_position = board[row_index][player_position.column]
         if curr_position == EMPTY_CELL:
             return False
@@ -172,10 +177,10 @@ def _can_outflank_south(board: [[str]], player_position: Move, player: str) -> b
 
 def _can_outflank_north(board: [[str]], player_position: Move, player: str) -> bool:
     """ Check if pieces will flip north of current position """
-    opponent = P_WHITE if player == P_BLACK else P_BLACK
-    opponent_seen = False
     if not _boundary_check(DIRECTION.NORTH, player_position, board):  # Minimum third row from top
         return False
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
     for row_index in range(player_position.row - 1, -1, -1):  # Check all rows before current row
         curr_position = board[row_index][player_position.column]
         if curr_position == EMPTY_CELL:
@@ -189,11 +194,11 @@ def _can_outflank_north(board: [[str]], player_position: Move, player: str) -> b
 
 def _can_outflank_east(board: [[str]], player_position: Move, player: str) -> bool:
     """ Check if pieces will flip east of current position """
-    opponent = P_WHITE if player == P_BLACK else P_BLACK
-    opponent_seen = False
     if not _boundary_check(DIRECTION.EAST, player_position, board):  # Minimum third col from right
         return False
-    for col_index in range(player_position.column + 1, len(board) - 1):  # Check all columns after current column
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
+    for col_index in range(player_position.column + 1, len(board)):  # Check all columns after current column
         curr_position = board[player_position.row][col_index]
         if curr_position == EMPTY_CELL:
             return False
@@ -206,10 +211,10 @@ def _can_outflank_east(board: [[str]], player_position: Move, player: str) -> bo
 
 def _can_outflank_west(board: [[str]], player_position: Move, player: str) -> bool:
     """ Check if pieces will flip west of current position """
-    opponent = P_WHITE if player == P_BLACK else P_BLACK
-    opponent_seen = False
     if not _boundary_check(DIRECTION.WEST, player_position, board):  # Minimum third col from left
         return False
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
     for col_index in range(player_position.column - 1, -1, -1):  # Check all columns before current column
         curr_position = board[player_position.row][col_index]
         if curr_position == EMPTY_CELL:
@@ -219,6 +224,82 @@ def _can_outflank_west(board: [[str]], player_position: Move, player: str) -> bo
         elif curr_position == player:
             return opponent_seen  # True if opponent seen before player.
     return False  # Reaches here if opponent piece encountered but flank not met by another player piece
+
+
+def _can_outflank_southeast(board: [[str]], player_position: Move, player: str) -> bool:
+    """ Check if pieces will flip southeast of current position """
+    if not _boundary_check(DIRECTION.SOUTHEAST, player_position, board):  # Min third cell from lower right corner
+        return False
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
+    col_index = player_position.column
+    for row_index in range(player_position.row + 1, len(board)):
+        col_index += 1
+        curr_position = board[row_index][col_index]
+        if curr_position == EMPTY_CELL:
+            return False
+        if curr_position == opponent:
+            opponent_seen = True
+        elif curr_position == player:
+            return opponent_seen
+    return False
+
+
+def _can_outflank_southwest(board: [[str]], player_position: Move, player: str) -> bool:
+    """ Check if pieces will flip southwest of current position """
+    if not _boundary_check(DIRECTION.SOUTHWEST, player_position, board):
+        return False
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
+    col_index = player_position.column
+    for row_index in range(player_position.row + 1, len(board)):
+        col_index -= 1
+        curr_position = board[row_index][col_index]
+        if curr_position == EMPTY_CELL:
+            return False
+        if curr_position == opponent:
+            opponent_seen = True
+        elif curr_position == player:
+            return opponent_seen
+    return False
+
+
+def _can_outflank_northeast(board: [[str]], player_position: Move, player: str) -> bool:
+    """ Check if pieces will flip northeast of current position """
+    if not _boundary_check(DIRECTION.NORTHEAST, player_position, board):
+        return False
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
+    col_index = player_position.column
+    for row_index in range(player_position.row - 1, -1, -1):
+        col_index += 1
+        curr_position = board[row_index][col_index]
+        if curr_position == EMPTY_CELL:
+            return False
+        if curr_position == opponent:
+            opponent_seen = True
+        elif curr_position == player:
+            return opponent_seen
+    return False
+
+
+def _can_outflank_northwest(board: [[str]], player_position: Move, player: str) -> bool:
+    """ Check if pieces will flip northwest of current position """
+    if not _boundary_check(DIRECTION.NORTHWEST, player_position, board):
+        return False
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    opponent_seen = False
+    col_index = player_position.column
+    for row_index in range(player_position.row - 1, -1, -1):
+        col_index -= 1
+        curr_position = board[row_index][col_index]
+        if curr_position == EMPTY_CELL:
+            return False
+        if curr_position == opponent:
+            opponent_seen = True
+        elif curr_position == player:
+            return opponent_seen
+    return False
 
 
 def _boundary_check(direction: str, position: Move, board: [[str]]) -> bool:
@@ -268,7 +349,7 @@ def _outflank_north(board: [[str]], player_position: Move, player: str) -> [[str
 def _outflank_east(board: [[str]], player_position: Move, player: str) -> [[str]]:
     """ Flips pieces east of current position """
     opponent = P_WHITE if player == P_BLACK else P_BLACK
-    for col_index in range(player_position.column + 1, len(board) - 1):
+    for col_index in range(player_position.column + 1, len(board)):
         curr_position = board[player_position.row][col_index]
         if curr_position == opponent:
             board[player_position.row][col_index] = player
@@ -285,6 +366,59 @@ def _outflank_west(board: [[str]], player_position: Move, player: str) -> [[str]
             board[player_position.row][col_index] = player
         else:
             return board
+
+
+def _outflank_southeast(board: [[str]], player_position: Move, player: str) -> [[str]]:
+    """ Flips pieces southeast of current position """
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    col_index = player_position.column
+    for row_index in range(player_position.row + 1, len(board)):
+        col_index += 1
+        curr_position = board[row_index][col_index]
+        if curr_position == opponent:
+            board[row_index][col_index] = player
+        else:
+            return board
+
+
+def _outflank_southwest(board: [[str]], player_position: Move, player: str) -> [[str]]:
+    """ Flips pieces southwest of current position """
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    col_index = player_position.column
+    for row_index in range(player_position.row + 1, len(board)):
+        col_index -= 1
+        curr_position = board[row_index][col_index]
+        if curr_position == opponent:
+            board[row_index][col_index] = player
+        else:
+            return board
+
+
+def _outflank_northeast(board: [[str]], player_position: Move, player: str) -> [[str]]:
+    """ Flips pieces northeast of current position """
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    col_index = player_position.column
+    for row_index in range(player_position.row - 1, -1, -1):
+        col_index += 1
+        curr_position = board[row_index][col_index]
+        if curr_position == opponent:
+            board[row_index][col_index] = player
+        else:
+            return board
+
+
+def _outflank_northwest(board: [[str]], player_position: Move, player: str) -> [[str]]:
+    """ Flips pieces northwest of current position """
+    opponent = P_WHITE if player == P_BLACK else P_BLACK
+    col_index = player_position.column
+    for row_index in range(player_position.row - 1, -1, -1):
+        col_index -= 1
+        curr_position = board[row_index][col_index]
+        if curr_position == opponent:
+            board[row_index][col_index] = player
+        else:
+            return board
+
 
 # Exception classes
 
