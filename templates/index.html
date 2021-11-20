@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Othello</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <section id="content" class="content">
+            <h1 class="game-title">Othello</h1>
+            <form id="game-setting-form" class="game-setting">
+                <h2 class="game-setting-header">Board Size</h2>
+                <div class="game-setting-choices">
+                    <input type="radio" id="four" name="board-size" value=4 checked/>
+                    <label for="four">4</label>
+                    <input type="radio" id="six" name="board-size" value=6 />
+                    <label for="six">6</label>
+                    <input type="radio" id="eight" name="board-size" value=8 />
+                    <label for="eight">8</label>
+                </div>
+                <button class="game-setting-btn">Submit</button>
+            </form>
+        </section>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
+</html>

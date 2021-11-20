@@ -1,4 +1,4 @@
-# main.py
+# terminal.py
 import othello_interface
 
 # Press ⌃R to execute it or replace it with your code.

@@ -1,0 +1,91 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --board-border-color: rgb(85, 60, 30);
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    align-items: center;
+    background: linear-gradient(56deg, rgba(30,28,34,1) 0%, rgba(47,49,55,1) 100%);
+    display: flex;
+    height: 100%;
+    justify-content: center;
+}
+
+.content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+}
+
+.game-title {
+    color: white;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+.game-setting-header {
+    grid-area: header;
+    padding: 0.5rem;
+}
+.game-setting-choices {
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
+    grid-area: choices;
+}
+.game-setting-btn {
+    border: none;
+    border-radius: 0.2rem;
+    cursor: pointer;
+    grid-area: submit;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+.game-setting-btn:hover {
+    background-color: green;
+    color: white;
+}
+.game-setting {
+    background: grey;
+    box-shadow: 0 0.1rem 0.5rem 0.1rem rgba(0,0,0,0.5);
+    color: white;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-areas: 
+    ". . header header . ."
+    "choices choices choices choices choices choices"
+    ". . submit submit . .";
+    padding: 1rem;
+}
+
+/* Board styles */
+
+.game-board {
+    border: 5px solid var(--board-border-color);
+    display: grid;
+    width: 40vw;
+    height: 40vw;
+}
+.board-cell {
+    align-items: center;
+    background-color: green;
+    border: 5px solid var(--board-border-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    transition: background-color 0.3s ease-in-out;
+}
+.board-cell:hover {
+    background-color: rgb(2, 167, 2);
+}
