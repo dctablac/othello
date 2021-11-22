@@ -20,7 +20,7 @@ body {
     justify-content: center;
 }
 
-.content {
+.game-setup {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -69,6 +69,12 @@ body {
     padding: 1rem;
 }
 
+/* Game info styles */
+
+.game-info-area {
+    border: 1px solid red;
+}
+
 /* Board styles */
 
 .game-board {
@@ -84,8 +90,15 @@ body {
     cursor: pointer;
     display: flex;
     justify-content: center;
-    transition: background-color 0.3s ease-in-out;
+    transition: background-color 0.2s ease-in-out;
 }
 .board-cell:hover {
     background-color: rgb(2, 167, 2);
+}
+.game-piece {
+    border-radius: 50%;
+    height: 50%;
+    position: relative;
+    width: 50%;
+    z-index: 1;
 }
