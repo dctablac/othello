@@ -91,11 +91,15 @@ def is_valid_board_size(board_size: int) -> int:
 
 def is_game_over(board: [[str]]) -> bool:
     """ Checks if no more moves are available """
-    for row in board:
-        for col in row:
-            if col == EMPTY_CELL:
+    # Check if outflanks available for either player
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            if board[row][col] == EMPTY_CELL:
+                black_move_possible = _player_can_outflank(_create_flank_map(board, row, col, P_BLACK))
+                white_move_possible = _player_can_outflank(_create_flank_map(board, row, col, P_WHITE))
+                if black_move_possible is False and white_move_possible is False:
+                    return True
                 return False
-    return True
 
 
 # Helper functions
@@ -242,6 +246,8 @@ def _can_outflank_southeast(board: [[str]], player_position: Move, player: str) 
     col_index = player_position.column
     for row_index in range(player_position.row + 1, len(board)):
         col_index += 1
+        if col_index >= len(board): # Column out of bounds, not finding flank
+            return False
         curr_position = board[row_index][col_index]
         if curr_position == EMPTY_CELL:
             return False
@@ -261,6 +267,8 @@ def _can_outflank_southwest(board: [[str]], player_position: Move, player: str) 
     col_index = player_position.column
     for row_index in range(player_position.row + 1, len(board)):
         col_index -= 1
+        if col_index < 0: # Column out of bounds, not finding flank
+            return False
         curr_position = board[row_index][col_index]
         if curr_position == EMPTY_CELL:
             return False
@@ -280,6 +288,8 @@ def _can_outflank_northeast(board: [[str]], player_position: Move, player: str) 
     col_index = player_position.column
     for row_index in range(player_position.row - 1, -1, -1):
         col_index += 1
+        if col_index >= len(board): # Column out of bounds, not finding flank
+            return False
         curr_position = board[row_index][col_index]
         if curr_position == EMPTY_CELL:
             return False
@@ -299,6 +309,8 @@ def _can_outflank_northwest(board: [[str]], player_position: Move, player: str) 
     col_index = player_position.column
     for row_index in range(player_position.row - 1, -1, -1):
         col_index -= 1
+        if col_index < 0: # Column out of bounds, not finding flank
+            return False
         curr_position = board[row_index][col_index]
         if curr_position == EMPTY_CELL:
             return False

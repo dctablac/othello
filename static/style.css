@@ -5,7 +5,8 @@
 }
 
 :root {
-    --board-border-color: rgb(85, 60, 30);
+    --board-border: rgb(85, 60, 30);
+    --game-info-background: rgb(238, 221, 147);
 }
 
 html {
@@ -15,7 +16,8 @@ html {
 body {
     align-items: center;
     background: linear-gradient(56deg, rgba(30,28,34,1) 0%, rgba(47,49,55,1) 100%);
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr;
     height: 100%;
     justify-content: center;
 }
@@ -71,22 +73,45 @@ body {
 
 /* Game info styles */
 
-.game-info-area {
-    border: 1px solid red;
+.game-info {
+    background-color: var(--game-info-background);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 2rem;
+}
+.game-stats {
+    justify-content: space-around;
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+}
+.player-scores {
+    display: flex;
+    justify-content: space-around;
+}
+.turn-display {
+    display: flex;
+    justify-content: center;
+}
+.move-log {
+    background-color: white;
+    height: 100%;
 }
 
 /* Board styles */
 
 .game-board {
-    border: 5px solid var(--board-border-color);
+    justify-self: center;
+    border: 5px solid var(--board-border);
     display: grid;
-    width: 40vw;
-    height: 40vw;
+    width: 60vw;
+    height: 60vw;
 }
 .board-cell {
     align-items: center;
     background-color: green;
-    border: 5px solid var(--board-border-color);
+    border: 5px solid var(--board-border);
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -97,8 +122,21 @@ body {
 }
 .game-piece {
     border-radius: 50%;
+    pointer-events: none;
     height: 50%;
     position: relative;
     width: 50%;
     z-index: 1;
+}
+
+/* Media Queries */
+
+@media (min-width: 800px) {
+    body {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .game-board {
+        height: 40vw;
+        width: 40vw;
+    }
 }
